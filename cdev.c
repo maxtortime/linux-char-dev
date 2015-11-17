@@ -3,6 +3,7 @@
 #include <linux/fs.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+#include <linux/string.h>
 
 struct Node {
 	int data;
@@ -14,9 +15,10 @@ static char msg[200];
 
 struct Node* front = NULL;
 struct Node* rear = NULL;
+char *tk;
 
 // To Enqueue an integer
-void Enqueue(int x) {
+static void Enqueue(int x) {
 	struct Node* temp = 
 		(struct Node*)kmalloc(sizeof(struct Node),GFP_KERNEL);
 	temp->data =x; 
@@ -30,7 +32,7 @@ void Enqueue(int x) {
 }
 
 // To Dequeue an integer.
-void Dequeue() {
+static void Dequeue(void) {
 	struct Node* temp = front;
 	if(front == NULL) {
 		printk("Queue is Empty\n");
@@ -46,7 +48,7 @@ void Dequeue() {
 	kfree(temp);
 }
 
-int Front() {
+static int Front(void) {
 	if(front == NULL) {
 		printk("Queue is empty\n");
 		return;
@@ -54,7 +56,7 @@ int Front() {
 	return front->data;
 }
 
-void Print() {
+static void Print(void) {
 	struct Node* temp = front;
 	while(temp != NULL) {
 		printk("%d ",temp->data);
@@ -73,11 +75,29 @@ static ssize_t device_read(struct file *filp, char __user *buffer, size_t length
 
 static ssize_t device_write(struct file *filp, const char __user *buff, size_t len, loff_t *off)
 {
+    int count = 0;
+    int n = 0;
+
 	if (len > 199)
 		return -EINVAL;
+    // write to buf from user's msg 
 	copy_from_user(msg, buff, len);
 	msg[len] = '\0';
-    Enqueue(1);
+
+    if (strncmp(msg,"enqueue",7) == 0) 
+    {
+        sscanf(msg+8,"%d",&n); // msg+8 is integer..
+        Enqueue(n);
+        Print();
+    }
+    else if (strncmp(msg,"dequeue",7)==0) {
+    	Dequeue();
+    	Print();
+    }
+    else if (strncmp(msg,"front",5)==0) {
+    	printk("Queue front: %d\n",Front());
+    }
+                
 	return len;
 }
 
