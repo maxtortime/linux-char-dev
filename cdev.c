@@ -35,7 +35,7 @@ static void Enqueue(int x) {
 static void Dequeue(void) {
 	struct Node* temp = front;
 	if(front == NULL) {
-		printk("Queue is Empty\n");
+		printk("cdev: Queue is Empty\n");
 		return;
 	}
 	if(front == rear) {
@@ -50,7 +50,7 @@ static void Dequeue(void) {
 
 static int Front(void) {
 	if(front == NULL) {
-		printk("Queue is empty\n");
+		printk("cdev: Queue is empty\n");
 		return;
 	}
 	return front->data;
@@ -58,6 +58,8 @@ static int Front(void) {
 
 static void Print(void) {
 	struct Node* temp = front;
+	printk("cdev: ");
+
 	while(temp != NULL) {
 		printk("%d ",temp->data);
 		temp = temp->next;
