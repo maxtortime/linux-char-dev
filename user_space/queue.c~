@@ -1,3 +1,6 @@
+struct Node* front;
+struct Node* rear;
+
 // To Enqueue an integer
 void Enqueue(int x) {
 	struct Node* temp = 
