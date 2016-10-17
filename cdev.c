@@ -70,14 +70,19 @@ static void Print(void) {
 
 static ssize_t device_read(struct file *filp, char __user *buffer, size_t length, loff_t *offset)
 {
-    Print();
+    struct Node* temp = front;
+    memset(msg,'\0',200);
+
+    while(temp!=NULL) {
+       sprintf(msg+strlen(msg),"%d ",temp->data);
+       temp = temp->next;
+    }
   	return simple_read_from_buffer(buffer, length, offset, msg, 200);
 }
 
 
 static ssize_t device_write(struct file *filp, const char __user *buff, size_t len, loff_t *off)
 {
-    int count = 0;
     int n = 0;
 
 	if (len > 199)
@@ -98,6 +103,9 @@ static ssize_t device_write(struct file *filp, const char __user *buff, size_t l
     }
     else if (strncmp(msg,"front",5)==0) {
     	printk("Queue front: %d\n",Front());
+    }
+    else if(strncmp(msg,"print",5)==0) {
+        Print();
     }
                 
 	return len;

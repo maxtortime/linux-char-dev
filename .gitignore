@@ -9,4 +9,4 @@ Module.symvers
 modules.order
 .tmp_versions/
 .cdev.*
-
+*.*~
